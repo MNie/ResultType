@@ -1,0 +1,26 @@
+﻿namespace ResultType.Validation.Rule
+{
+    using System;
+
+    using ResultType.Factories;
+    using ResultType.Results;
+
+    public class Rule : IRule
+    {
+        private readonly Func<bool> _predicate;
+        private readonly string _message;
+
+        public Rule(Func<bool> pred, string msg)
+        {
+            _predicate = pred;
+            _message = msg;
+        }
+
+        public static IRule CreateEmpty() => new Rule(() => true, string.Empty);
+
+        public Result<Unit> Apply() =>
+            _predicate()
+                ? ResultFactory.CreateSuccess()
+                : ResultFactory.CreateFailure(_message);
+    }
+}
