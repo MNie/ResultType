@@ -1,7 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.1</Version>
+    <Authors>Michał Niegrzybowski</Authors>
+    <Company>Michał Niegrzybowski - MNie</Company>
+    <PackageId>MNie.ResultType.Validation</PackageId>
+    <Product>MNie.ResultType.Validation</Product>
+    <Description>Implementation of validation of a ResultType.</Description>
+    <Copyright>Michał Niegrzybowski</Copyright>
+    <PackageLicenseUrl>https://github.com/MNie/ResultType/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/MNie/ResultType</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MNie/ResultType</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>ResultType, Functional Programming, Result, Validation</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
