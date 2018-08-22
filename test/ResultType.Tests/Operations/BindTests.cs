@@ -2,10 +2,12 @@
 
 namespace ResultType.Tests.Operations
 {
+    using System;
     using System.Threading.Tasks;
 
     using ResultType.Factories;
     using ResultType.Operations;
+    using ResultType.Tests.Results;
 
     using Shouldly;
 
@@ -66,5 +68,29 @@ namespace ResultType.Tests.Operations
         [Fact]
         public async Task BindAsync_WhenFirstEndWithSuccessAsync() =>
             (await firstSuccessResultAsync.BindAsync((input) => Task.FromResult(ResultFactory.CreateSuccess(input)))).Payload.ShouldBe(first);
+
+        [Fact]
+        public void Bind_OnFailureResult_PropagateError()
+        {
+            var exception = new ArgumentException("bad arg");
+            var failure = new FailureError("some fail", exception);
+            var badResult = ResultFactory.CreateFailure<string>(failure);
+
+            var result = badResult.Bind(() => ResultFactory.CreateSuccess(true));
+
+            (result.Error as FailureError).Exception.ShouldBe(exception);
+        }
+
+        [Fact]
+        public async Task BindAsync_OnFailureResult_PropagateError()
+        {
+            var exception = new ArgumentException("bad arg");
+            var failure = new FailureError("some fail", exception);
+            var badResult = await ResultFactory.CreateFailureAsync<string>(failure);
+
+            var result = await badResult.BindAsync(async () => await ResultFactory.CreateSuccessAsync(""));
+
+            (result.Error as FailureError).Exception.ShouldBe(exception);
+        }
     }
 }
