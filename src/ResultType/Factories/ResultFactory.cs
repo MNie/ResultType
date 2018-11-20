@@ -17,5 +17,6 @@
         public static Task<Result<Unit>> CreateFailureAsync(IError error) => CreateFailureAsync<Unit>(error);
         public static Task<Result<Unit>> CreateFailureAsync(string msg) => CreateFailureAsync<Unit>(new Error(msg));
         public static Task<Result<TPayload>> CreateFailureAsync<TPayload>(IError error) => Task.FromResult(CreateFailure<TPayload>(error));
+        public static Task<Result<TPayload>> CreateFailureAsync<TPayload>(string msg) => Task.FromResult(CreateFailure<TPayload>(msg));
     }
 }

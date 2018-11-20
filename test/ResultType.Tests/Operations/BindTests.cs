@@ -66,5 +66,23 @@ namespace ResultType.Tests.Operations
         [Fact]
         public async Task BindAsync_WhenFirstEndWithSuccessAsync() =>
             (await firstSuccessResultAsync.BindAsync((input) => Task.FromResult(ResultFactory.CreateSuccess(input)))).Payload.ShouldBe(first);
+        
+        [Fact]
+        public void Bind_WhenOnFailureParameterWasUsedAndResultReturnsAnError_PropagateError()
+        {
+            var badResult = ResultFactory.CreateFailure<string>("first failure");
+            var result = badResult.Bind(onSuccess: (x) => ResultFactory.CreateSuccess(), onFailure: (x) => ResultFactory.CreateFailure($"{x.Message} and second failure"));
+            result.Error.Message.ShouldBe("first failure and second failure");
+        }
+        [Fact]
+        public void Bind_WhenOnSuccessParameterWasUsedAndResultReturnsValidData_PropagatePayload()
+        {
+            var success = ResultFactory.CreateSuccess("first success");
+            var result = success.Bind(
+                onSuccess: (x) => ResultFactory.CreateSuccess($"{x} and second one"), 
+                onFailure: (x) => ResultFactory.CreateFailure<string>($"{x.Message} and second failure")
+            );
+            result.Payload.ShouldBe("first success and second one");
+        }
     }
 }

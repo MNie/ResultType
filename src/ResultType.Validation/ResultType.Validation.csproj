@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <Authors>Michał Niegrzybowski</Authors>
     <Company>Michał Niegrzybowski - MNie</Company>
     <PackageId>MNie.ResultType.Validation</PackageId>
@@ -15,6 +15,7 @@
     <RepositoryUrl>https://github.com/MNie/ResultType</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>ResultType, Functional Programming, Result, Validation</PackageTags>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

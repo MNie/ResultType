@@ -56,5 +56,11 @@
         [DebuggerStepThrough]
         public static async Task<Result<TOutput>> BindAsync<TInput, TOutput>(this Task<Result<TInput>> result, Func<TInput, Task<Result<TOutput>>> toBind) =>
             await BindAsync(result, async () => await toBind((await result.ConfigureAwait(false)).Payload)).ConfigureAwait(false);
+        
+        [DebuggerStepThrough]
+        public static Result<TOutput> Bind<TInput, TOutput>(this Result<TInput> result, Func<TInput, Result<TOutput>> onSuccess, Func<IError, Result<TOutput>> onFailure) =>
+            result.IsSuccess
+                ? onSuccess(result.Payload)
+                : onFailure(result.Error);
     }
 }
