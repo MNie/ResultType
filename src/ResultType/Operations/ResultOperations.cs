@@ -13,7 +13,7 @@
         public static Result<TOutput> Bind<TInput, TOutput>(this Result<TInput> result, Func<Result<TOutput>> toBind) =>
             result.IsSuccess
                 ? toBind()
-                : ResultFactory.CreateFailure<TOutput>(result.Error.Message);
+                : ResultFactory.CreateFailure<TOutput>(result.Error);
 
         [DebuggerStepThrough]
         public static Result<TOutput> Bind<TInput, TOutput>(this Result<TInput> result, Func<TInput, Result<TOutput>> toBind) =>
@@ -29,7 +29,7 @@
         public static async Task<Result<TOutput>> BindAsync<TInput, TOutput>(this Result<TInput> result, Func<Task<Result<TOutput>>> toBind) =>
             result.IsSuccess
                 ? await toBind().ConfigureAwait(false)
-                : ResultFactory.CreateFailure<TOutput>(result.Error.Message);
+                : ResultFactory.CreateFailure<TOutput>(result.Error);
 
         [DebuggerStepThrough]
         public static async Task<Result<TOutput>> BindAsync<TInput, TOutput>(
@@ -50,7 +50,7 @@
             var r = await result.ConfigureAwait(false);
             return r.IsSuccess
                 ? await toBind().ConfigureAwait(false)
-                : ResultFactory.CreateFailure<TOutput>(r.Error.Message);
+                : ResultFactory.CreateFailure<TOutput>(r.Error);
         }
 
         [DebuggerStepThrough]
