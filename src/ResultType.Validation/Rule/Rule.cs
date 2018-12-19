@@ -2,8 +2,8 @@
 {
     using System;
 
-    using ResultType.Factories;
-    using ResultType.Results;
+    using Factories;
+    using Results;
 
     public class Rule : IRule
     {

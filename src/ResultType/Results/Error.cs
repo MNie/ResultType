@@ -1,30 +1,26 @@
 ﻿namespace ResultType.Results
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     public interface IError
     {
         string Message { get; }
+        string MemberName { get; }
+        string FilePath { get; }
+        int Line { get; }
     }
 
     public class Error : IError
     {
         public string Message { get; }
+        public string MemberName { get; }
+        public string FilePath { get; }
+        public int Line { get; }
 
-        public Error(string msg)
+        public Error(string msg, string memberName, string filePath, int line)
         {
             Message = msg;
+            MemberName = memberName;
+            FilePath = filePath;
+            Line = line;
         }
-    }
-    
-    public class AggregateError : IError
-    {
-        public string Message { get; }
-        public IReadOnlyCollection<IError> Errors { get; }
-
-        public AggregateError(IEnumerable<IError> errors) => Errors = errors?.ToList() ?? new List<IError>();
-
-        public Error Flatten => new Error(string.Concat(", ", Errors.Select(x => x.Message)));
     }
 }

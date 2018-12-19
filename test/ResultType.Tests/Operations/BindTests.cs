@@ -7,7 +7,7 @@ namespace ResultType.Tests.Operations
 
     using ResultType.Factories;
     using ResultType.Operations;
-    using ResultType.Tests.Results;
+    using Results;
 
     using Shouldly;
 

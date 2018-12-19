@@ -15,11 +15,14 @@
     {
         public FailureError(string message, Exception exception)
         {
-            this.Message = message;
-            this.Exception = exception;
+            Message = message;
+            Exception = exception;
         }
 
         public string Message { get; }
+        public string MemberName { get; }
+        public string FilePath { get; }
+        public int Line { get; }
         public Exception Exception { get; }
         
     }

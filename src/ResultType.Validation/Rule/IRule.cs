@@ -1,6 +1,6 @@
 ﻿namespace ResultType.Validation.Rule
 {
-    using ResultType.Results;
+    using Results;
 
     public interface IRule
     {

@@ -2,7 +2,7 @@
 {
     using System;
 
-    using ResultType.Validation.Operations;
+    using Operations;
     using ResultType.Validation.Rule;
 
     using Shouldly;

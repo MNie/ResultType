@@ -34,7 +34,7 @@
         public void Result_withValidResult_WhenComparingToInvalidResult_ReturnFalse() => (result == ResultFactory.CreateSuccess("invalidString")).ShouldBeFalse();
 
         [Fact]
-        public void Result_withValidResult_WhenComparingToFailureResult_ReturnFalse() => (result == ResultFactory.CreateFailure<string>(new TestError("error msg"))).ShouldBeFalse();
+        public void Result_withValidResult_WhenComparingToFailureResult_ReturnFalse() => (result == ResultFactory.CreateFailure<string>(new TestError("error msg", "member", "path", 1))).ShouldBeFalse();
 
         [Fact]
         public void Result_withValidResult_WhenComparingIfIsNotEquaToValidValueResult_ReturnFalse() => (result != ResultFactory.CreateSuccess(ValidString)).ShouldBeFalse();
@@ -43,6 +43,6 @@
         public void Result_withValidResult_WhenComparingIfIsNotEquaToInvalidResult_ReturnTrue() => (result != ResultFactory.CreateSuccess("invalidString")).ShouldBeTrue();
 
         [Fact]
-        public void Result_withValidResult_WhenComparingIfIsNotEquaToFailureResult_ReturnTrue() => (result != ResultFactory.CreateFailure<string>(new TestError("error msg"))).ShouldBeTrue();
+        public void Result_withValidResult_WhenComparingIfIsNotEquaToFailureResult_ReturnTrue() => (result != ResultFactory.CreateFailure<string>(new TestError("error msg", "member", "path", 1))).ShouldBeTrue();
     }
 }

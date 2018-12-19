@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using ResultType.Factories;
-    using ResultType.Results;
-    using ResultType.Validation.Rule;
+    using Factories;
+    using Results;
+    using Rule;
 
     public static class RuleExtensions
     {

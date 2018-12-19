@@ -4,8 +4,8 @@
     using System.Diagnostics;
     using System.Threading.Tasks;
 
-    using ResultType.Factories;
-    using ResultType.Results;
+    using Factories;
+    using Results;
 
     public static class ResultOperations
     {
