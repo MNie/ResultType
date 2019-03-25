@@ -7,9 +7,12 @@ namespace ResultType.Tests.Extensions
     using ResultType.Results;
     using Shouldly;
     using Xunit;
-
+    using static ResultType.Extensions.ResultExtensions;
+    
     public class ResultExtensionsTests
     {
+        [Fact]
+        public void Success_ReturnSuccess() => Success().IsSuccess.ShouldBeTrue();
         [Fact]
         public void ToSuccess_ReturnSuccessResult() =>
             12.ToSuccess().IsSuccess.ShouldBeTrue();
@@ -41,6 +44,12 @@ namespace ResultType.Tests.Extensions
             .ShouldBe("dd");
         
         [Fact]
+        public void ToFailure_WhenArgumentIsString_ReturnFailureResult() =>
+            "error".ToFailure<Unit>()
+                .IsFailure
+                .ShouldBeTrue();
+        
+        [Fact]
         public void Map_OnSuccess_Return1() =>
             12.ToSuccess().Map(x => 1, y => 2).ShouldBe(1);
         
@@ -63,5 +72,33 @@ namespace ResultType.Tests.Extensions
         [Fact]
         public async Task MapAsync_OnFailure_ReturnTaskWith2Inside() =>
             (await ResultFactory.CreateFailureAsync<Unit>("").MapAsync(x => Task.FromResult(1), y => Task.FromResult(2))).ShouldBe(2);
+
+        [Fact]
+        public void ToSuccessWhen_WhenConditionIsTrue_ReturnSuccess() =>
+            "leszek walesa"
+                .ToSuccessWhen(x => !string.IsNullOrWhiteSpace(x), "leszek jest pusty")
+                .IsSuccess
+                .ShouldBeTrue();
+        
+        [Fact]
+        public void ToSuccessWhen_WhenConditionIsFalse_ReturnFailure() =>
+            "leszek walesa"
+                .ToSuccessWhen(string.IsNullOrWhiteSpace, "leszek jest pusty")
+                .IsFailure
+                .ShouldBeTrue();
+        
+        [Fact]
+        public void ToFailureWhen_WhenConditionIsTrue_ReturnFailure() =>
+            "leszek walesa"
+                .ToFailureWhen(x => !string.IsNullOrWhiteSpace(x), "leszek jest pusty")
+                .IsFailure
+                .ShouldBeTrue();
+        
+        [Fact]
+        public void ToFailureWhen_WhenConditionIsFalse_ReturnSuccess() =>
+            "leszek walesa"
+                .ToFailureWhen(string.IsNullOrWhiteSpace, "leszek jest pusty")
+                .IsSuccess
+                .ShouldBeTrue();
     }
 }

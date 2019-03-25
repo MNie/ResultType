@@ -62,5 +62,35 @@
             result.IsSuccess
                 ? onSuccess(result.Payload)
                 : onFailure(result.Error);
+        
+        [DebuggerStepThrough]
+        public static async Task<Result<TOutput>> BindAsync<TInput, TOutput>(this Result<TInput> result, Func<TInput, Task<Result<TOutput>>> onSuccess, Func<IError, Task<Result<TOutput>>> onFailure) =>
+            result.IsSuccess
+                ? await onSuccess(result.Payload).ConfigureAwait(false)
+                : await onFailure(result.Error).ConfigureAwait(false);
+
+        [DebuggerStepThrough]
+        public static async Task<Result<TOutput>> BindAsync<TInput, TOutput>(this Task<Result<TInput>> result,
+            Func<TInput, Task<Result<TOutput>>> onSuccess, Func<IError, Task<Result<TOutput>>> onFailure)
+        {
+            var r = await result;
+            return r.IsSuccess
+                ? await onSuccess(r.Payload).ConfigureAwait(false)
+                : await onFailure(r.Error).ConfigureAwait(false);
+        }
+        
+        [DebuggerStepThrough]
+        public static Result<TInput> Intercept<TInput>(this Result<TInput> result, Action intercept)
+        {
+            intercept();
+            return result;
+        }
+          
+        [DebuggerStepThrough]
+        public static Task<Result<TInput>> InterceptAsync<TInput>(this Task<Result<TInput>> result, Action intercept)
+        {
+            intercept();
+            return result;
+        }
     }
 }

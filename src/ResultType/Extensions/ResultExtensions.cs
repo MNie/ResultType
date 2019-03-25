@@ -8,11 +8,26 @@ namespace ResultType.Extensions
 
     public static class ResultExtensions
     {
+        public static Result<Unit> Success() 
+            => ResultFactory.CreateSuccess();
+        
         public static Result<TType> ToSuccess<TType>(this TType obj) 
             => ResultFactory.CreateSuccess<TType>(obj);
         
+        public static Result<TType> ToSuccessWhen<TType>(this TType obj, Predicate<TType> predicate, string msg, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) 
+            => 
+                predicate(obj) ? ResultFactory.CreateSuccess(obj) : ResultFactory.CreateFailure<TType>(new Error(msg, memberName, sourceFilePath, sourceLineNumber));
+
+        public static Result<TType> ToFailureWhen<TType>(this TType obj, Predicate<TType> predicate, string msg,
+            [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
+            => obj.ToSuccessWhen(x => !predicate(x), msg, memberName, sourceFilePath, sourceLineNumber);
+        
         public static Result<TType> ToFailure<TType>(this Exception obj, string msg, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) 
             => ResultFactory.CreateFailure<TType>(new Error(msg, memberName, sourceFilePath, sourceLineNumber));
+        
+        public static Result<TType> ToFailure<TType>(this string msg, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) 
+            => ResultFactory.CreateFailure<TType>(msg, memberName, sourceFilePath, sourceLineNumber);
         
         public static Task<Result<TType>> ToSuccessAsync<TType>(this TType obj) 
             => ResultFactory.CreateSuccessAsync<TType>(obj);

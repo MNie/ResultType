@@ -8,7 +8,7 @@ namespace ResultType.Tests.Operations
     using ResultType.Factories;
     using ResultType.Operations;
     using Results;
-
+    using ResultType.Extensions;
     using Shouldly;
 
     using Xunit;
@@ -100,6 +100,7 @@ namespace ResultType.Tests.Operations
             var result = badResult.Bind(onSuccess: (x) => ResultFactory.CreateSuccess(), onFailure: (x) => ResultFactory.CreateFailure($"{x.Message} and second failure"));
             result.Error.Message.ShouldBe("first failure and second failure");
         }
+        
         [Fact]
         public void Bind_WhenOnSuccessParameterWasUsedAndResultReturnsValidData_PropagatePayload()
         {
@@ -109,6 +110,36 @@ namespace ResultType.Tests.Operations
                 onFailure: (x) => ResultFactory.CreateFailure<string>($"{x.Message} and second failure")
             );
             result.Payload.ShouldBe("first success and second one");
+        }
+        
+        [Fact]
+        public async Task BindAsync_OnTaskWhenOnFailureParameterWasUsedAndResultReturnsSuccess_ReturnNotAnErrorMessage()
+        {
+            var badResult = ResultFactory.CreateFailureAsync<string>("first failure");
+
+            var result = await badResult.BindAsync(onSuccess: (string x) => x.ToSuccessAsync(), onFailure: _ => "not an error".ToSuccessAsync());
+
+            result.Payload.ShouldBe("not an error");
+        }
+        
+        [Fact]
+        public async Task BindAsync_WhenOnFailureParameterWasUsedAndResultReturnsSuccess_ReturnNotAnErrorMessage()
+        {
+            var badResult = ResultFactory.CreateFailure<string>("first failure");
+
+            var result = await badResult.BindAsync(onSuccess: (string x) => x.ToSuccessAsync(), onFailure: _ => "not an error".ToSuccessAsync());
+
+            result.Payload.ShouldBe("not an error");
+        }
+        
+        [Fact]
+        public async Task BindAsync_OnSuccessResult_DoSomethingWithResult()
+        {
+            var success = "piesek leszek".ToSuccessAsync();
+            var result = await success.BindAsync(async msg => await msg.ToSuccessAsync(),
+                async error => ResultFactory.CreateFailure<string>(error));
+            
+            result.Payload.ShouldBe("piesek leszek");
         }
     }
 }
