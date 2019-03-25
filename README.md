@@ -48,6 +48,14 @@ var result = ResultFactory.CreateSuccess()
   .Bind((fromPreviousSuccess, fromPreviousFailure) => ResultFactory.CreateSuccess(true));
 ```
 
+* mapping result
+
+```csharp
+[HttpGet]
+public IActionResult SomeAction() =>
+    "test".ToSuccess().Map(Ok, BadRequest);
+```
+
 `Bind` function accepts `Func<TPrevious, TOutput>` or `Func<TOuput>` it depends on you if you want to based on the previous value. There is also an async implementation of `Bind` with `Async` postfix.
 There are also async functions which in fact are boxing result into a Task.
 ```csharp
