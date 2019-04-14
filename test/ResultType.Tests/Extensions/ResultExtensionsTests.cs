@@ -100,5 +100,93 @@ namespace ResultType.Tests.Extensions
                 .ToFailureWhen(string.IsNullOrWhiteSpace, "leszek jest pusty")
                 .IsSuccess
                 .ShouldBeTrue();
+
+        [Fact]
+        public void Flatten_WhenWeHaveAllSuccesses_ReturnSuccess()
+        {
+            var results = new[]
+            {
+                "d".ToSuccess(),
+                "dd".ToSuccess(),
+                "de".ToSuccess()
+            };
+
+            var result = results.Flatten();
+            result.IsSuccess.ShouldBeTrue();
+        }
+        
+        [Fact]
+        public async Task FlattenAsync_WhenWeHaveAllSuccesses_ReturnSuccess()
+        {
+            var results = new[]
+            {
+                "d".ToSuccessAsync(),
+                "dd".ToSuccessAsync(),
+                "de".ToSuccessAsync()
+            };
+
+            var result = await results.FlattenAsync();
+            result.IsSuccess.ShouldBeTrue();
+        }
+        
+        [Fact]
+        public void Flatten_WhenWeHaveSingleError_ReturnFailure()
+        {
+            var results = new[]
+            {
+                "d".ToSuccess(),
+                "dd".ToFailure<string>(),
+                "de".ToSuccess()
+            };
+
+            var result = results.Flatten();
+            result.IsFailure.ShouldBeTrue();
+            (result.Error as AggregateError).Errors.Count.ShouldBe(1);
+        }
+        
+        [Fact]
+        public async Task FlattenAsync_WhenWeHaveSingleError_ReturnFailure()
+        {
+            var results = new []
+            {
+                "d".ToSuccessAsync(),
+                "dd".ToFailureAsync<string>(),
+                "de".ToSuccessAsync()
+            };
+
+            var result = await results.FlattenAsync();
+            result.IsFailure.ShouldBeTrue();
+            (result.Error as AggregateError).Errors.Count.ShouldBe(1);
+        }
+        
+        [Fact]
+        public void Flatten_WhenWeHaveAllFailures_ReturnFailure()
+        {
+            var results = new[]
+            {
+                "d".ToFailure<string>(),
+                "dd".ToFailure<string>(),
+                "de".ToFailure<string>(),
+            };
+
+            var result = results.Flatten();
+            result.IsFailure.ShouldBeTrue();
+            (result.Error as AggregateError).Errors.Count.ShouldBe(3);
+        }
+        
+        [Fact]
+        public async Task FlattenAsync_WhenWeHaveAllFailures_ReturnFailure()
+        {
+            var results = new[]
+            {
+                "d".ToFailureAsync<string>(),
+                "dd".ToFailureAsync<string>(),
+                "de".ToFailureAsync<string>(),
+            };
+
+            var result = await results.FlattenAsync();
+            result.IsFailure.ShouldBeTrue();
+            (result.Error as AggregateError).Errors.Count.ShouldBe(3);
+        }
     }
 }

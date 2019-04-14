@@ -1,6 +1,8 @@
 namespace ResultType.Extensions
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using Factories;
@@ -33,6 +35,9 @@ namespace ResultType.Extensions
             => ResultFactory.CreateSuccessAsync<TType>(obj);
         
         public static Task<Result<TType>> ToFailureAsync<TType>(this Exception obj, string msg, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) 
+            => ResultFactory.CreateFailureAsync<TType>(new Error(msg, memberName, sourceFilePath, sourceLineNumber));
+        
+        public static Task<Result<TType>> ToFailureAsync<TType>(this string msg, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) 
             => ResultFactory.CreateFailureAsync<TType>(new Error(msg, memberName, sourceFilePath, sourceLineNumber));
         
         public static async Task<Result<TType>> ToSuccessAsync<TType>(this Task<TType> obj) 
@@ -68,6 +73,30 @@ namespace ResultType.Extensions
             return r.IsSuccess
                 ? onSuccess(r.Payload)
                 : onFailure(r.Error);
+        }
+        
+        public static Result<IEnumerable<T>> Flatten<T>(this IEnumerable<Result<T>> results)
+        {
+            var resultList = results.ToArray();
+            var errors = resultList.Where(x => x.IsFailure).Select(failure => failure.Error).ToList();
+            var payloads = resultList.Where(x => x.IsSuccess).Select(success => success.Payload);
+            return errors.Any()
+                ? ResultFactory.CreateFailure<IEnumerable<T>>(new AggregateError(errors))
+                : ResultFactory.CreateSuccess(payloads);
+        }
+        
+        public static async Task<Result<IEnumerable<T>>> FlattenAsync<T>(this IEnumerable<Task<Result<T>>> results)
+        {
+            var resultList = results.ToList();
+            
+            await Task.WhenAll(resultList); 
+
+            var errors = resultList.Select(t => t.Result).Where(x => x.IsFailure).Select(failure => failure.Error).ToArray();
+            var payloads = resultList.Select(t => t.Result).Where(x => x.IsSuccess).Select(success => success.Payload);
+            
+            return errors.Any()
+                ? ResultFactory.CreateFailure<IEnumerable<T>>(new AggregateError(errors))
+                : ResultFactory.CreateSuccess(payloads);
         }
     }
 }
