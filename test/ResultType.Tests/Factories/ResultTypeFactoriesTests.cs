@@ -61,7 +61,7 @@
             result.IsFailure.ShouldBeTrue();
             result.Error.Message.ShouldBe("s");
             result.Error.MemberName.ShouldBe("CreateFailure_CreatesFailure");
-            result.Error.FilePath.ShouldEndWith("\\ResultTypeFactoriesTests.cs");
+            result.Error.FilePath.ShouldEndWith("ResultTypeFactoriesTests.cs");
             result.Error.Line.ShouldBe(59);
         }
 
