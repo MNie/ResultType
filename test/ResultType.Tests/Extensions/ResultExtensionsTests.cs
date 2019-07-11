@@ -188,5 +188,42 @@ namespace ResultType.Tests.Extensions
             result.IsFailure.ShouldBeTrue();
             (result.Error as AggregateError).Errors.Count.ShouldBe(3);
         }
+        
+        
+        [Fact]
+        public void ToSuccessWhen_WhenConditionIsTrueAndWePropagateIError_ReturnSuccess() =>
+            "leszek walesa"
+                .ToSuccessWhen(x => !string.IsNullOrWhiteSpace(x), new TestError("heheszki", "", "", 0))
+                .IsSuccess
+                .ShouldBeTrue();
+
+        [Fact]
+        public void ToSuccessWhen_WhenConditionIsFalseWePropagateIError_ReturnFailureWithPropagatedError()
+        {
+            var err = new TestError("heheszki", "", "", 0);
+            var result = "leszek walesa"
+                .ToSuccessWhen(string.IsNullOrWhiteSpace, err);
+            
+            result.IsFailure.ShouldBeTrue();
+            result.Error.ShouldBe(err);
+        }
+        
+        [Fact]
+        public void ToFailureWhen_WhenConditionIsTrueWePropagateIError_ReturnFailureWithPropagatedError()
+        {
+            var err = new TestError("heheszki", "", "", 0);
+            var result = "leszek walesa"
+                .ToFailureWhen(x => !string.IsNullOrWhiteSpace(x), err);
+        
+            result.IsFailure.ShouldBeTrue();
+            result.Error.ShouldBe(err);
+        }
+
+        [Fact]
+        public void ToFailureWhen_WhenConditionIsFalseWePropagateIError_ReturnSuccess() =>
+            "leszek walesa"
+                .ToFailureWhen(string.IsNullOrWhiteSpace, new TestError("heheszki", "", "", 0))
+                .IsSuccess
+                .ShouldBeTrue();
     }
 }

@@ -25,6 +25,15 @@ namespace ResultType.Extensions
             [CallerLineNumber] int sourceLineNumber = 0)
             => obj.ToSuccessWhen(x => !predicate(x), msg, memberName, sourceFilePath, sourceLineNumber);
         
+        public static Result<TType> ToSuccessWhen<TType>(this TType obj, Predicate<TType> predicate, IError err, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) 
+            => 
+                predicate(obj) ? ResultFactory.CreateSuccess(obj) : ResultFactory.CreateFailure<TType>(err);
+
+        public static Result<TType> ToFailureWhen<TType>(this TType obj, Predicate<TType> predicate, IError err,
+            [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
+            => obj.ToSuccessWhen(x => !predicate(x), err, memberName, sourceFilePath, sourceLineNumber);
+        
         public static Result<TType> ToFailure<TType>(this Exception obj, string msg, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) 
             => ResultFactory.CreateFailure<TType>(new Error(msg, memberName, sourceFilePath, sourceLineNumber));
         
