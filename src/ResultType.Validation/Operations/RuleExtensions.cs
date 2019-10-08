@@ -10,18 +10,24 @@
 
     public static class RuleExtensions
     {
-        public static Result<Unit> Apply(this IEnumerable<IRule> rules)
+        public static IResult<Unit> Apply(this IEnumerable<IRule> rules)
         {
             var notApplied = rules
                 .Select(x => x.Apply())
-                .Where(x => x.IsFailure)
+                .Where(x => x is Failure<Unit>)
+                .Cast<Failure<Unit>>()
                 .ToList();
+            
             return notApplied.Any() 
                 ? ResultFactory.CreateFailure(FormatMessages(notApplied)) 
                 : ResultFactory.CreateSuccess();
         }
 
-        private static string FormatMessages(IEnumerable<Result<Unit>> results)
-            => string.Join(Environment.NewLine, results.Select(x => x.Error.Message));
+        private static string FormatMessages(IEnumerable<IResult<Unit>> results)
+            => string.Join(Environment.NewLine, results
+                .Where(x => x is Failure<Unit>)
+                .Cast<Failure<Unit>>()
+                .Select(x => x.Error.Message)
+            );
     }
 }

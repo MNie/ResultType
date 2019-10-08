@@ -3,7 +3,7 @@
     using System.Threading.Tasks;
 
     using ResultType.Factories;
-
+    using ResultType.Results;
     using Shouldly;
 
     using Xunit;
@@ -16,8 +16,8 @@
         {
             var r = CreateSuccess("s");
 
-            r.IsSuccess.ShouldBeTrue();
-            r.Payload.ShouldBe("s");
+            (r is Success<string>).ShouldBeTrue();
+            (r as Success<string>).Payload.ShouldBe("s");
         }
 
         [Fact]
@@ -25,23 +25,23 @@
         {
             var r = await CreateSuccessAsync("s");
 
-            r.IsSuccess.ShouldBeTrue();
-            r.Payload.ShouldBe("s");
+            (r is Success<string>).ShouldBeTrue();
+            (r as Success<string>).Payload.ShouldBe("s");
         }
 
         [Fact]
-        public void CreateSuccess_CreatesSuccess() => CreateSuccess().IsSuccess.ShouldBeTrue();
+        public void CreateSuccess_CreatesSuccess() => (CreateSuccess() is Success<Unit>).ShouldBeTrue();
 
         [Fact]
-        public async Task CreateSuccessAsync_CreatesSuccess() => (await CreateSuccessAsync()).IsSuccess.ShouldBeTrue();
+        public async Task CreateSuccessAsync_CreatesSuccess() => ((await CreateSuccessAsync()) is Success<Unit>).ShouldBeTrue();
 
         [Fact]
         public void CreateFailureAsyncWithType_CreatesFailure()
         {
             var r = CreateFailure<string>("s");
 
-            r.IsFailure.ShouldBeTrue();
-            r.Error.Message.ShouldBe("s");
+            (r is Failure<string>).ShouldBeTrue();
+            (r as Failure<string>).Error.Message.ShouldBe("s");
         }
 
         [Fact]
@@ -49,8 +49,8 @@
         {
             var r = CreateFailure<string>(new TestError("s", "member", "path", 0));
 
-            r.IsFailure.ShouldBeTrue();
-            r.Error.Message.ShouldBe("s");
+            (r is Failure<string>).ShouldBeTrue();
+            (r as Failure<string>).Error.Message.ShouldBe("s");
         }
 
         [Fact]
@@ -58,20 +58,20 @@
         {
             var result = CreateFailure("s");
             
-            result.IsFailure.ShouldBeTrue();
-            result.Error.Message.ShouldBe("s");
-            result.Error.MemberName.ShouldBe("CreateFailure_CreatesFailure");
-            result.Error.FilePath.ShouldEndWith("ResultTypeFactoriesTests.cs");
-            result.Error.Line.ShouldBe(59);
+            (result is Failure<Unit>).ShouldBeTrue();
+            (result as Failure<Unit>).Error.Message.ShouldBe("s");
+            (result as Failure<Unit>).Error.MemberName.ShouldBe("CreateFailure_CreatesFailure");
+            (result as Failure<Unit>).Error.FilePath.ShouldEndWith("ResultTypeFactoriesTests.cs");
+            (result as Failure<Unit>).Error.Line.ShouldBe(59);
         }
 
         [Fact]
-        public void CreateFailureWithError_CreatesFailure() => CreateFailure(new TestError("s", "member", "path", 0)).IsFailure.ShouldBeTrue();
+        public void CreateFailureWithError_CreatesFailure() => (CreateFailure(new TestError("s", "member", "path", 0)) is Failure<Unit>).ShouldBeTrue();
 
         [Fact]
-        public async Task CreateFailureAsync_CreatesFailure() => (await CreateFailureAsync("s")).IsFailure.ShouldBeTrue();
+        public async Task CreateFailureAsync_CreatesFailure() => ((await CreateFailureAsync("s")) is Failure<Unit>).ShouldBeTrue();
 
         [Fact]
-        public async Task CreateFailureAsyncWithError_CreatesFailure() => (await CreateFailureAsync(new TestError("s", "member", "path", 0))).IsFailure.ShouldBeTrue();
+        public async Task CreateFailureAsyncWithError_CreatesFailure() => ((await CreateFailureAsync(new TestError("s", "member", "path", 0))) is Failure<Unit>).ShouldBeTrue();
     }
 }

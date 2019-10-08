@@ -4,6 +4,6 @@
 
     public interface IRule
     {
-        Result<Unit> Apply();
+        IResult<Unit> Apply();
     }
 }
