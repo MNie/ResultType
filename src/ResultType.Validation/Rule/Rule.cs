@@ -18,7 +18,7 @@
 
         public static IRule CreateEmpty() => new Rule(() => true, string.Empty);
 
-        public Result<Unit> Apply() =>
+        public IResult<Unit> Apply() =>
             _predicate()
                 ? ResultFactory.CreateSuccess()
                 : ResultFactory.CreateFailure(_message);

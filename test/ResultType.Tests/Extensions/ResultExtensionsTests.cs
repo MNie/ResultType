@@ -1,52 +1,55 @@
 namespace ResultType.Tests.Extensions
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using ResultType.Extensions;
     using ResultType.Factories;
     using ResultType.Results;
     using Shouldly;
     using Xunit;
-    using static ResultType.Extensions.ResultExtensions;
     
     public class ResultExtensionsTests
     {
         [Fact]
-        public void Success_ReturnSuccess() => Success().IsSuccess.ShouldBeTrue();
+        public void Success_ReturnSuccess() => (SuccessExtensions.Success() is Success<Unit>).ShouldBeTrue();
         [Fact]
         public void ToSuccess_ReturnSuccessResult() =>
-            12.ToSuccess().IsSuccess.ShouldBeTrue();
+            (12.ToSuccess() is Success<int>).ShouldBeTrue();
 
         [Fact]
         public async Task ToSuccessAsync_ReturnSuccessResult() =>
-            (await 12.ToSuccessAsync()).IsSuccess.ShouldBeTrue();
+            ((await 12.ToSuccessAsync()) is Success<int>).ShouldBeTrue();
         
         [Fact]
         public async Task ToSuccessAsync_WhenArgumentIsTask_ReturnSuccessResult() =>
-            (await Task.FromResult(12).ToSuccessAsync()).IsSuccess.ShouldBeTrue();
+            ((await Task.FromResult(12).ToSuccessAsync()) is Success<int>).ShouldBeTrue();
         
         [Fact]
         public async Task ToFailureAsync_WhenArgumentIsExceptionWithoutMsg_ReturnFailureResult() =>
-            ((Error) (await Task.FromResult(new Exception("error")).ToFailureAsync<Unit>()).Error)
+            ((await Task.FromResult(new Exception("error")).ToFailureAsync<Unit>()) as Failure<Unit>)
+            .Error
             .Message
             .ShouldBe("error");
         
         [Fact]
         public async Task ToFailureAsync_ReturnSuccessResult() =>
-            ((Error) (await (new Exception("error").ToFailureAsync<Unit>("dd"))).Error)
+            ((await (new Exception("error").ToFailureAsync<Unit>("dd"))) as Failure<Unit>)
+            .Error
             .Message
             .ShouldBe("dd");
         
         [Fact]
         public void ToFailure_WhenArgumentIsException_ReturnFailureResult() =>
-            ((Error) (new Exception("error").ToFailure<Unit>("dd")).Error)
+            ((new Exception("error").ToFailure<Unit>("dd")) as Failure<Unit>)
+            .Error
             .Message
             .ShouldBe("dd");
         
         [Fact]
         public void ToFailure_WhenArgumentIsString_ReturnFailureResult() =>
-            "error".ToFailure<Unit>()
-                .IsFailure
+            ("error".ToFailure<Unit>()
+                is Failure<Unit>)
                 .ShouldBeTrue();
         
         [Fact]
@@ -75,30 +78,30 @@ namespace ResultType.Tests.Extensions
 
         [Fact]
         public void ToSuccessWhen_WhenConditionIsTrue_ReturnSuccess() =>
-            "leszek walesa"
+            ("leszek walesa"
                 .ToSuccessWhen(x => !string.IsNullOrWhiteSpace(x), "leszek jest pusty")
-                .IsSuccess
+                 is Success<string>)
                 .ShouldBeTrue();
         
         [Fact]
         public void ToSuccessWhen_WhenConditionIsFalse_ReturnFailure() =>
-            "leszek walesa"
+            ("leszek walesa"
                 .ToSuccessWhen(string.IsNullOrWhiteSpace, "leszek jest pusty")
-                .IsFailure
+                is Failure<string>)
                 .ShouldBeTrue();
         
         [Fact]
         public void ToFailureWhen_WhenConditionIsTrue_ReturnFailure() =>
-            "leszek walesa"
+            ("leszek walesa"
                 .ToFailureWhen(x => !string.IsNullOrWhiteSpace(x), "leszek jest pusty")
-                .IsFailure
+                is Failure<string>)
                 .ShouldBeTrue();
         
         [Fact]
         public void ToFailureWhen_WhenConditionIsFalse_ReturnSuccess() =>
-            "leszek walesa"
+            ("leszek walesa"
                 .ToFailureWhen(string.IsNullOrWhiteSpace, "leszek jest pusty")
-                .IsSuccess
+                 is Success<string>)
                 .ShouldBeTrue();
 
         [Fact]
@@ -112,7 +115,7 @@ namespace ResultType.Tests.Extensions
             };
 
             var result = results.Flatten();
-            result.IsSuccess.ShouldBeTrue();
+            (result is Success<IEnumerable<string>>).ShouldBeTrue();
         }
         
         [Fact]
@@ -126,7 +129,7 @@ namespace ResultType.Tests.Extensions
             };
 
             var result = await results.FlattenAsync();
-            result.IsSuccess.ShouldBeTrue();
+            (result is Success<IEnumerable<string>>).ShouldBeTrue();
         }
         
         [Fact]
@@ -140,8 +143,8 @@ namespace ResultType.Tests.Extensions
             };
 
             var result = results.Flatten();
-            result.IsFailure.ShouldBeTrue();
-            (result.Error as AggregateError).Errors.Count.ShouldBe(1);
+            (result is Failure<IEnumerable<string>>).ShouldBeTrue();
+            ((result as Failure<IEnumerable<string>>).Error as AggregateError).Errors.Count.ShouldBe(1);
         }
         
         [Fact]
@@ -155,8 +158,8 @@ namespace ResultType.Tests.Extensions
             };
 
             var result = await results.FlattenAsync();
-            result.IsFailure.ShouldBeTrue();
-            (result.Error as AggregateError).Errors.Count.ShouldBe(1);
+            (result is Failure<IEnumerable<string>>).ShouldBeTrue();
+            ((result as Failure<IEnumerable<string>>).Error as AggregateError).Errors.Count.ShouldBe(1);
         }
         
         [Fact]
@@ -170,8 +173,8 @@ namespace ResultType.Tests.Extensions
             };
 
             var result = results.Flatten();
-            result.IsFailure.ShouldBeTrue();
-            (result.Error as AggregateError).Errors.Count.ShouldBe(3);
+            (result is Failure<IEnumerable<string>>).ShouldBeTrue();
+            ((result as Failure<IEnumerable<string>>).Error as AggregateError).Errors.Count.ShouldBe(3);
         }
         
         [Fact]
@@ -185,16 +188,16 @@ namespace ResultType.Tests.Extensions
             };
 
             var result = await results.FlattenAsync();
-            result.IsFailure.ShouldBeTrue();
-            (result.Error as AggregateError).Errors.Count.ShouldBe(3);
+            (result is Failure<IEnumerable<string>>).ShouldBeTrue();
+            ((result as Failure<IEnumerable<string>>).Error as AggregateError).Errors.Count.ShouldBe(3);
         }
         
         
         [Fact]
         public void ToSuccessWhen_WhenConditionIsTrueAndWePropagateIError_ReturnSuccess() =>
-            "leszek walesa"
+            ("leszek walesa"
                 .ToSuccessWhen(x => !string.IsNullOrWhiteSpace(x), new TestError("heheszki", "", "", 0))
-                .IsSuccess
+                 is Success<string>)
                 .ShouldBeTrue();
 
         [Fact]
@@ -204,8 +207,8 @@ namespace ResultType.Tests.Extensions
             var result = "leszek walesa"
                 .ToSuccessWhen(string.IsNullOrWhiteSpace, err);
             
-            result.IsFailure.ShouldBeTrue();
-            result.Error.ShouldBe(err);
+            (result is Failure<string>).ShouldBeTrue();
+            (result as Failure<string>).Error.ShouldBe(err);
         }
         
         [Fact]
@@ -215,15 +218,15 @@ namespace ResultType.Tests.Extensions
             var result = "leszek walesa"
                 .ToFailureWhen(x => !string.IsNullOrWhiteSpace(x), err);
         
-            result.IsFailure.ShouldBeTrue();
-            result.Error.ShouldBe(err);
+            (result is Failure<string>).ShouldBeTrue();
+            (result as Failure<string>).Error.ShouldBe(err);
         }
 
         [Fact]
         public void ToFailureWhen_WhenConditionIsFalseWePropagateIError_ReturnSuccess() =>
-            "leszek walesa"
+            ("leszek walesa"
                 .ToFailureWhen(string.IsNullOrWhiteSpace, new TestError("heheszki", "", "", 0))
-                .IsSuccess
+                 is Success<string>)
                 .ShouldBeTrue();
     }
 }

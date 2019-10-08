@@ -3,6 +3,7 @@
     using System;
 
     using Operations;
+    using Results;
     using ResultType.Validation.Rule;
 
     using Shouldly;
@@ -13,19 +14,19 @@
     {
         [Fact]
         public void Rule_ifPredicateIsTrue_ReturnSuccessResult() =>
-            new Rule(() => "name".StartsWith("n"), "name").Apply().IsSuccess.ShouldBeTrue();
+            (new Rule(() => "name".StartsWith("n"), "name").Apply() is Success<Unit>).ShouldBeTrue();
 
         [Fact]
         public void Rule_ifEmptyRuleWasUsed_ReturnSuccessResult() =>
-            Rule.CreateEmpty().Apply().IsSuccess.ShouldBeTrue();
+            (Rule.CreateEmpty().Apply() is Success<Unit>).ShouldBeTrue();
 
         [Fact]
         public void Rule_ifPredicateIsFalseTrue_ReturnFailureResult()
         {
             var result = new Rule(() => "name".StartsWith("d"), "name").Apply();
 
-            result.IsFailure.ShouldBeTrue();
-            result.Error.Message.ShouldBe("name");
+            (result is Failure<Unit>).ShouldBeTrue();
+            (result as Failure<Unit>).Error.Message.ShouldBe("name");
         }
 
         [Fact]
@@ -39,7 +40,7 @@
             };
             var result = rules.Apply();
 
-            result.IsSuccess.ShouldBeTrue();
+            (result is Success<Unit>).ShouldBeTrue();
         }
 
         [Fact]
@@ -54,11 +55,11 @@
             };
             var result = rules.Apply();
 
-            result.IsFailure.ShouldBeTrue();
-            result.Error.Message.ShouldBe($"dd{Environment.NewLine}hh");
+            (result is Failure<Unit>).ShouldBeTrue();
+            (result as Failure<Unit>).Error.Message.ShouldBe($"dd{Environment.NewLine}hh");
         }
 
         [Fact]
-        public void Rule_ifPredicatesAreEmpty_ReturnSuccessResult() => new IRule[0].Apply().IsSuccess.ShouldBeTrue();
+        public void Rule_ifPredicatesAreEmpty_ReturnSuccessResult() => (new IRule[0].Apply() is Success<Unit>).ShouldBeTrue();
     }
 }
