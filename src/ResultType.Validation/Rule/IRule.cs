@@ -2,8 +2,12 @@
 {
     using Results;
 
-    public interface IRule
+    public interface IRule : IRule<Unit>
     {
-        IResult<Unit> Apply();
+    }
+
+    public interface IRule<TValidate>
+    {
+        IResult<TValidate> Apply();
     }
 }

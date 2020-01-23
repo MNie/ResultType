@@ -34,14 +34,28 @@ namespace ResultType.Tests.Extensions
         
         [Fact]
         public async Task ToFailureAsync_ReturnSuccessResult() =>
-            ((await (new Exception("error").ToFailureAsync<Unit>("dd"))) as Failure<Unit>)
+            ((await (new Exception("error").ToFailureAsync<Unit>())) as Failure<Unit>)
+            .Error
+            .Message
+            .ShouldBe("error");
+        
+        [Fact]
+        public void ToFailure_WhenArgumentIsException_ReturnFailureResult() =>
+            ((new Exception("error").ToFailure<Unit>()) as Failure<Unit>)
+            .Error
+            .Message
+            .ShouldBe("error");
+        
+        [Fact]
+        public async Task ToFailureWithMsgAsync_ReturnSuccessResult() =>
+            ((await (new Exception("error").ToFailureWithMsgAsync<Unit>("dd"))) as Failure<Unit>)
             .Error
             .Message
             .ShouldBe("dd");
         
         [Fact]
-        public void ToFailure_WhenArgumentIsException_ReturnFailureResult() =>
-            ((new Exception("error").ToFailure<Unit>("dd")) as Failure<Unit>)
+        public void ToFailureWithMsg_WhenArgumentIsException_ReturnFailureResult() =>
+            ((new Exception("error").ToFailureWithMsg<Unit>("dd")) as Failure<Unit>)
             .Error
             .Message
             .ShouldBe("dd");
@@ -228,5 +242,21 @@ namespace ResultType.Tests.Extensions
                 .ToFailureWhen(string.IsNullOrWhiteSpace, new TestError("heheszki", "", "", 0))
                  is Success<string>)
                 .ShouldBeTrue();
+
+        [Fact]
+        public void IsSuccess_WhenResultIsSuccess_ReturnTrue() =>
+            ResultFactory.CreateSuccess("on nie wiedzial").IsSuccess().ShouldBeTrue();
+        
+        [Fact]
+        public void IsSuccess_WhenResultIsFailure_ReturnFalse() =>
+            ResultFactory.CreateFailure("on nie wiedzial - exception").IsSuccess().ShouldBeFalse();
+        
+        [Fact]
+        public void IsFailure_WhenResultIsSuccess_ReturnFalse() =>
+            ResultFactory.CreateSuccess("on nie wiedzial").IsFailure().ShouldBeFalse();
+        
+        [Fact]
+        public void IsFailure_WhenResultIsFailure_ReturnTrue() =>
+            ResultFactory.CreateFailure("on nie wiedzial - exception").IsFailure().ShouldBeTrue();
     }
 }

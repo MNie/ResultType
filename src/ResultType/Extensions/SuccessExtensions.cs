@@ -1,6 +1,7 @@
 namespace ResultType.Extensions
 {
     using System;
+    using System.Net.NetworkInformation;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using Factories;
@@ -27,5 +28,12 @@ namespace ResultType.Extensions
         public static IResult<TType> ToSuccessWhen<TType>(this TType obj, Predicate<TType> predicate, IError err, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) 
             => 
                 predicate(obj) ? ResultFactory.CreateSuccess(obj) : ResultFactory.CreateFailure<TType>(err);
+
+        public static bool IsSuccess<TType>(this IResult<TType> result) =>
+            result switch
+            {
+                Success<TType> _ => true,
+                _ => false
+            };
     }
 }

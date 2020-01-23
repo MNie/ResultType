@@ -1,5 +1,6 @@
 ﻿namespace ResultType.Results
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
@@ -26,6 +27,18 @@
             FilePath = filePath;
             Line = line;
         }
+    }
+    
+    public class ErrorWithException : Error
+    {
+        public Exception Exception { get; }
+        public ErrorWithException(Exception ex, [CallerMemberName] string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+            : base(ex.Message, memberName, filePath, line) =>
+            Exception = ex;
+        
+        public ErrorWithException(string msg, Exception ex, [CallerMemberName] string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+            : base(msg, memberName, filePath, line) =>
+            Exception = ex;
     }
     
     public class AggregateError : Error

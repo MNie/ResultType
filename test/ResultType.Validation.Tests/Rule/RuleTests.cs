@@ -1,7 +1,14 @@
 ﻿namespace ResultType.Validation.Tests.Rule
 {
     using System;
-
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Reflection;
+    using Extensions;
+    using Factories;
+    using Microsoft.VisualStudio.TestPlatform.ObjectModel;
     using Operations;
     using Results;
     using ResultType.Validation.Rule;

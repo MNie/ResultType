@@ -1,7 +1,6 @@
 ﻿namespace ResultType.Validation.Rule
 {
     using System;
-
     using Factories;
     using Results;
 
