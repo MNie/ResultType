@@ -80,3 +80,28 @@ var rules = new[]
 };
 var result = rules.Apply();
 ```
+
+Besides `Rule` class package provides also a `RuleBuilder` class. By which you could define predicates based on which Success or Failure would be created.
+
+Sample usage:
+```csharp
+class TestObject
+{
+    public readonly string FieldA;
+    public readonly int FieldB;
+    
+    public TestObject(string fieldA, int fieldB)
+    {
+        FieldA = fieldA;
+        FieldB = fieldB;
+    }
+}
+
+...
+
+var result = RuleBuilder
+                .Build(() => new TestObject("", 5))
+                .For(x => x.FieldB, x => x > 10, "greater than 10")
+                .For(x => x.FieldB, x => x < 2, "less than 2")
+                .Apply();
+```
