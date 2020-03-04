@@ -31,7 +31,7 @@
     {
         private static IResult<Unit> result;
         private const string ErrorMsg = "error msg";
-        public FailureResultTests() => result = ResultFactory.CreateFailure(ErrorMsg);
+        public FailureResultTests() => result = ResultFactory.CreateFailure<Unit>(ErrorMsg);
 
         [Fact]
         public void Result_withValidResult_HasNotToBeSuccess() => (result is Success<Unit>).ShouldBeFalse();
@@ -41,5 +41,14 @@
 
         [Fact]
         public void Result_withValidResult_HasErrorMsgEqualToErrorMsg() => (result as Failure<Unit>).Error.Message.ShouldBe(ErrorMsg);
+        
+        [Fact]
+        public void Deconstruct_ReturnError()
+        {
+            if (result is Failure<Unit> (var payload))
+                payload.Message.ShouldBe(ErrorMsg);
+            else
+                throw new Exception($"{nameof(result)} should be a {nameof(Failure<Unit>)} but was not.");
+        }
     }
 }

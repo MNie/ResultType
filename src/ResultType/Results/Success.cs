@@ -32,5 +32,7 @@ namespace ResultType.Results
                 Success<TPayload> x => EqualityComparer<TPayload>.Default.Equals(_payload, x._payload),
                 _ => false
                 };
+
+        public void Deconstruct(out TPayload payload) => payload = _payload;
     }
 }

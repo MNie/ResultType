@@ -23,5 +23,14 @@
 
         [Fact]
         public void Result_withValidResult_HasPayloadEqualToValidValue() => (result as Success<string>).Payload.ShouldBe(ValidString);
+
+        [Fact]
+        public void Deconstruct_ReturnPayload()
+        {
+            if (result is Success<string> (var payload))
+                payload.ShouldBe(ValidString);
+            else
+                throw new Exception($"{nameof(payload)} should be a {nameof(Success<string>)} but was not.");
+        }
     }
 }

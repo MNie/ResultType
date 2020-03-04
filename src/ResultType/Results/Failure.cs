@@ -36,5 +36,7 @@ namespace ResultType.Results
                 Failure<TPayload> x => EqualityComparer<IError>.Default.Equals(_error, x._error),
                 _ => false
                 };
+
+        public void Deconstruct(out IError error) => error = _error;
     }
 }
