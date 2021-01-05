@@ -45,7 +45,7 @@ namespace ResultType.Extensions
         public static IResult<TType> ToFailureWhen<TType>(this TType obj, Predicate<TType> predicate, IError err,
             [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int sourceLineNumber = 0)
-            => obj.ToSuccessWhen(x => !predicate(x), err, memberName, sourceFilePath, sourceLineNumber);
+            => obj.ToSuccessWhen(x => !predicate(x), err);
         
         public static bool IsFailure<TType>(this IResult<TType> result) =>
             result switch

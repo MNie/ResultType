@@ -1,7 +1,5 @@
 ﻿namespace ResultType.Tests.Results
 {
-    using System;
-
     using ResultType.Factories;
     using ResultType.Results;
 

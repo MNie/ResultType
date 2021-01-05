@@ -66,10 +66,10 @@ namespace ResultType.Validation.Rule
                         expressionToCheck = ((LambdaExpression)expressionToCheck).Body;
                         break;
                     case ExpressionType.MemberAccess:
-                        var memberExpression = ((MemberExpression)expressionToCheck);
+                        var memberExpression = (MemberExpression)expressionToCheck;
 
-                        if (memberExpression.Expression.NodeType != ExpressionType.Parameter &&
-                            memberExpression.Expression.NodeType != ExpressionType.Convert)
+                        if (memberExpression.Expression?.NodeType != ExpressionType.Parameter &&
+                            memberExpression.Expression?.NodeType != ExpressionType.Convert)
                         {
                             throw new ArgumentException(
                                 $"Expression '{lambdaExpression}' must resolve to top-level member and not any child object's fields/properties.",
@@ -121,12 +121,12 @@ namespace ResultType.Validation.Rule
             return this;
         }
 
-        private TMember GetValue<TMember>(TType investigated, MemberInfo info)
+        private static TMember GetValue<TMember>(TType investigated, MemberInfo info)
         {
             return info switch
             {
-                FieldInfo fi => (TMember) fi.GetValue(investigated),
-                PropertyInfo pi => (TMember) pi.GetValue(investigated),
+                FieldInfo fi => (TMember) fi.GetValue(investigated)!,
+                PropertyInfo pi => (TMember) pi.GetValue(investigated)!,
                 _ => throw new Exception("not supported type")
             };
         }

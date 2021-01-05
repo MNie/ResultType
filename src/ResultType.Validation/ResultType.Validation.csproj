@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.0.3</Version>
+    <Version>3.0.0</Version>
     <Authors>Michał Niegrzybowski</Authors>
     <Company>Michał Niegrzybowski - MNie</Company>
     <PackageId>MNie.ResultType.Validation</PackageId>
@@ -16,7 +16,7 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>ResultType, Functional Programming, Result, Validation</PackageTags>
     <DebugType>Full</DebugType>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>

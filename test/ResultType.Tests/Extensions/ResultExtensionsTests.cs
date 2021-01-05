@@ -19,43 +19,43 @@ namespace ResultType.Tests.Extensions
 
         [Fact]
         public async Task ToSuccessAsync_ReturnSuccessResult() =>
-            ((await 12.ToSuccessAsync()) is Success<int>).ShouldBeTrue();
+            (await 12.ToSuccessAsync() is Success<int>).ShouldBeTrue();
         
         [Fact]
         public async Task ToSuccessAsync_WhenArgumentIsTask_ReturnSuccessResult() =>
-            ((await Task.FromResult(12).ToSuccessAsync()) is Success<int>).ShouldBeTrue();
+            (await Task.FromResult(12).ToSuccessAsync() is Success<int>).ShouldBeTrue();
         
         [Fact]
         public async Task ToFailureAsync_WhenArgumentIsExceptionWithoutMsg_ReturnFailureResult() =>
-            ((await Task.FromResult(new Exception("error")).ToFailureAsync<Unit>()) as Failure<Unit>)
+            (await Task.FromResult(new Exception("error")).ToFailureAsync<Unit>() as Failure<Unit>)
             .Error
             .Message
             .ShouldBe("error");
         
         [Fact]
         public async Task ToFailureAsync_ReturnSuccessResult() =>
-            ((await (new Exception("error").ToFailureAsync<Unit>())) as Failure<Unit>)
+            (await new Exception("error").ToFailureAsync<Unit>() as Failure<Unit>)
             .Error
             .Message
             .ShouldBe("error");
         
         [Fact]
         public void ToFailure_WhenArgumentIsException_ReturnFailureResult() =>
-            ((new Exception("error").ToFailure<Unit>()) as Failure<Unit>)
+            (new Exception("error").ToFailure<Unit>() as Failure<Unit>)
             .Error
             .Message
             .ShouldBe("error");
         
         [Fact]
         public async Task ToFailureWithMsgAsync_ReturnSuccessResult() =>
-            ((await (new Exception("error").ToFailureWithMsgAsync<Unit>("dd"))) as Failure<Unit>)
+            (await new Exception("error").ToFailureWithMsgAsync<Unit>("dd") as Failure<Unit>)
             .Error
             .Message
             .ShouldBe("dd");
         
         [Fact]
         public void ToFailureWithMsg_WhenArgumentIsException_ReturnFailureResult() =>
-            ((new Exception("error").ToFailureWithMsg<Unit>("dd")) as Failure<Unit>)
+            (new Exception("error").ToFailureWithMsg<Unit>("dd") as Failure<Unit>)
             .Error
             .Message
             .ShouldBe("dd");

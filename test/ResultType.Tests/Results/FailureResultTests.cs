@@ -1,10 +1,7 @@
 ﻿namespace ResultType.Tests.Results
 {
     using System;
-    using System.Threading.Tasks;
-
     using ResultType.Factories;
-    using ResultType.Operations;
     using ResultType.Results;
 
     using Shouldly;
